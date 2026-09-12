@@ -1,1 +1,44 @@
+//Variables
+
+cpf_list = []
+name_list = []
+date_list = []
+cpf = ''
+name = ''
+data = ''
+
+//Metodo para cadastrar novos pacientes
+def cadastrar(cpf):
+    cpf_ex = False
+    for i in range(len(cpf_list)):
+        if cpf[i] == cpf:
+            cpf_ex = True
+            print(f'O CPF informado já possui cadastro no sistema')
+            print(cpf)
+
+        if not cpf_ex:
+            name: str = input(f'Informe o nome do paciente:')
+            data: str = input(f'Informe a data de nascimento do paciente:')
+            cpf_list.append(cpf)
+            name_list.append(name)
+            date_list.append(data)
+            print(cpf, name, data)
+
+//Loop main (possibilita armazenar os Cpfs sem perde-los)
+while True:
+    n = int(input(f'Escolha um opção abaixo:\n'
+              '1 - Cadastrar CPF\n'
+              '8 - Encerrar\n'))
+    match n :
+        case 1:
+            cpf = input('Informe o nome do CPF: ')
+            cadastrar(cpf)
+
+            print(f'{cpf_list}')
+        case 8:
+            break
+        case _ :
+            print('Opção invalida!')
+            n = 0
+            break
 
