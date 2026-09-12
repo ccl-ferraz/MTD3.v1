@@ -10,7 +10,7 @@ def formatar_cpf(cpf):
 
 #Funcao Buscar Paciente
 def buscar_paciente(cpf):
-    paciente_encontrado = None #Variavel de controle
+    paciente_encontrado = None
 
     for paciente in pacientes:
         if paciente["cpf"] == cpf:
@@ -19,7 +19,8 @@ def buscar_paciente(cpf):
 
     if paciente_encontrado:
         print("Paciente encontrado com sucesso!")
-        cpf_f = formatar_cpf({paciente_encontrado['cpf']})
+        cpf_str = paciente_encontrado['cpf'] #Variavel de controle para formatacao
+        cpf_f = formatar_cpf(cpf_str)
         print(f"CPF: {cpf_f} | Nome: {paciente_encontrado['nome']} | Data: {paciente_encontrado['data']}")
     else:
         print("Paciente ainda nao possui cadastro!")
@@ -27,7 +28,8 @@ def buscar_paciente(cpf):
 
 #Funcao para cadastro de novos pacientes
 def cadastrar_paciente(cpf):
-    paciente_encontrado = None #Variavel de controle
+
+    paciente_encontrado = None
 
     for paciente in pacientes:
         if paciente["cpf"] == cpf:
@@ -36,7 +38,9 @@ def cadastrar_paciente(cpf):
 
     if paciente_encontrado:
         print("Paciente ja possui cadastro!")
-        print(f"CPF: {paciente_encontrado['cpf']} | Nome: {paciente_encontrado['nome']} | Data: {paciente_encontrado['data']}")
+        cpf_str = paciente_encontrado['cpf']  # Variavel de controle para formatacao
+        cpf_f = formatar_cpf(cpf_str)
+        print(f"CPF: {cpf_f} | Nome: {paciente_encontrado['nome']} | Data: {paciente_encontrado['data']}")
     else:
         nome: str = input(f'Informe o nome do paciente:')
         data: str = input(f'Informe a data de nascimento do paciente:')
@@ -48,21 +52,22 @@ def cadastrar_paciente(cpf):
 
 #Loop main do Codigo
 while True:
-    n = int(input(f'Escolha um opção abaixo:\n'
+    n: str = input(f'\nEscolha um opção abaixo:\n'
               '1 - Cadastrar CPF\n'
               '2 - Buscar CPF\n'
-              '8 - Encerrar\n'))
+              '8 - Encerrar\n')
     match n :
-        case 1:
+        case "1":
             cpf: str = input(f'Informe o numero do CPF: ')
             cadastrar_paciente(cpf)
             print(f'{pacientes}')
-        case 2:
+        case "2":
             cpf: str = input(f'Informe o numero do CPF: ')
             buscar_paciente(cpf)
-        case 8:
+        case "8":
             break
         case _ :
             print('Opção invalida!')
-            n = 0
+
+
 
