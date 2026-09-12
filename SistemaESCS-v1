@@ -1,44 +1,68 @@
-//Variables
-
-cpf_list = []
-name_list = []
-date_list = []
+#Variaveis
+pacientes = []
 cpf = ''
-name = ''
+nome = ''
 data = ''
 
-//Metodo para cadastrar novos pacientes
-def cadastrar(cpf):
-    cpf_ex = False
-    for i in range(len(cpf_list)):
-        if cpf[i] == cpf:
-            cpf_ex = True
-            print(f'O CPF informado já possui cadastro no sistema')
-            print(cpf)
+#Funcao para formatar o Cpf
+def formatar_cpf(cpf):
+    return f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}"
 
-        if not cpf_ex:
-            name: str = input(f'Informe o nome do paciente:')
-            data: str = input(f'Informe a data de nascimento do paciente:')
-            cpf_list.append(cpf)
-            name_list.append(name)
-            date_list.append(data)
-            print(cpf, name, data)
+#Funcao Buscar Paciente
+def buscar_paciente(cpf):
+    paciente_encontrado = None #Variavel de controle
 
-//Loop main (possibilita armazenar os Cpfs sem perde-los)
+    for paciente in pacientes:
+        if paciente["cpf"] == cpf:
+            paciente_encontrado = paciente
+            break
+
+    if paciente_encontrado:
+        print("Paciente encontrado com sucesso!")
+        cpf_f = formatar_cpf({paciente_encontrado['cpf']})
+        print(f"CPF: {cpf_f} | Nome: {paciente_encontrado['nome']} | Data: {paciente_encontrado['data']}")
+    else:
+        print("Paciente ainda nao possui cadastro!")
+
+
+#Funcao para cadastro de novos pacientes
+def cadastrar_paciente(cpf):
+    paciente_encontrado = None #Variavel de controle
+
+    for paciente in pacientes:
+        if paciente["cpf"] == cpf:
+            paciente_encontrado = paciente
+            break
+
+    if paciente_encontrado:
+        print("Paciente ja possui cadastro!")
+        print(f"CPF: {paciente_encontrado['cpf']} | Nome: {paciente_encontrado['nome']} | Data: {paciente_encontrado['data']}")
+    else:
+        nome: str = input(f'Informe o nome do paciente:')
+        data: str = input(f'Informe a data de nascimento do paciente:')
+        pacientes.append({"cpf": cpf, "nome": nome, "data": data})
+        cpf_f = formatar_cpf(cpf)
+        print(f"CPF: {cpf_f} | Nome: {nome} | Data: {data}")
+
+
+
+#Loop main do Codigo
 while True:
     n = int(input(f'Escolha um opção abaixo:\n'
               '1 - Cadastrar CPF\n'
+              '2 - Buscar CPF\n'
               '8 - Encerrar\n'))
     match n :
         case 1:
-            cpf = input('Informe o nome do CPF: ')
-            cadastrar(cpf)
-
-            print(f'{cpf_list}')
+            cpf: str = input(f'Informe o numero do CPF: ')
+            cadastrar_paciente(cpf)
+            print(f'{pacientes}')
+        case 2:
+            cpf: str = input(f'Informe o numero do CPF: ')
+            buscar_paciente(cpf)
         case 8:
             break
         case _ :
             print('Opção invalida!')
             n = 0
-            break
 
