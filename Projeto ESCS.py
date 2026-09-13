@@ -4,6 +4,8 @@
 #Variaveis
 pacientes = []
 fila_espera = []
+pacientes_atendidos = []
+contador_eventos = 0
 
 
 #Metodo para cadastrar novos pacientes
@@ -71,36 +73,99 @@ def cadastrar_paciente(cpf):
 
 #Funcao para dar entrada do paciente na fila de espera
 def dar_entrada(cpf, risco):
-    paciente_encontrado = None #Variavel de controle
+    global contador_eventos
 
+    paciente_encontrado = None #Variavel de controle
     for paciente in pacientes:
         if paciente["cpf"] == cpf:
             paciente_encontrado = paciente
             break
 
-    if paciente_encontrado:
-        paciente_encontrado["risco"] = risco
-        risco_atual = int(risco)
+    if not paciente_encontrado:
+        print("Paciente ainda não possui cadastro. Cadastrando novo paciente...")
+        cadastrar_paciente(cpf)
+        # Rebusca o paciente que acabou de ser cadastrado
+        for paciente in pacientes:
+            if paciente["cpf"] == cpf:
+                paciente_encontrado = paciente
+                break
 
-        print(f"Paciente {paciente_encontrado['nome']} adicionado à fila de espera com risco {risco}.")
+    # Registra o evento de entrada e adiciona à fila
+    if paciente_encontrado:
+        contador_eventos += 1  # Incrementa o contador de eventos
+
+        # Cria uma cópia para colocar na fila com as informações da consulta atual
+        paciente_fila = paciente_encontrado.copy()
+        paciente_fila["risco"] = risco
+        paciente_fila["evento_entrada"] = (contador_eventos)  # Garante que a chave é criada
 
         inserido = False
         for i in range(len(fila_espera)):
-            if int(risco) < int(fila_espera[i]['risco']):  # Comparando o risco do paciente atual com os pacientes na fila
-                fila_espera.insert(i, paciente_encontrado)
+            if int(risco) < int(fila_espera[i]["risco"]):
+                fila_espera.insert(i, paciente_fila)
                 inserido = True
                 break
 
         if not inserido:
-            fila_espera.append(paciente_encontrado)
-            
-        print(f"Fila de espera atualizada: {fila_espera}")
+            fila_espera.append(paciente_fila)
+
+        print(
+            f"Paciente {paciente_fila['nome']} adicionado à fila no evento nº {contador_eventos} com risco {risco}."
+        )
+        
+def chamar_proximo():
+    global contador_eventos
+
+    if fila_espera:
+        contador_eventos += 1
+        proximo_paciente = fila_espera.pop(0)
+
+        evento_entrada = proximo_paciente.get("evento_entrada", contador_eventos)
+        tempo_espera_eventos = contador_eventos - evento_entrada
+
+        proximo_paciente["tempo_espera"] = tempo_espera_eventos
+        pacientes_atendidos.append(proximo_paciente)
+
+        print(f"Chamando próximo paciente: {proximo_paciente['nome']} com risco {proximo_paciente['risco']}.\n")
+        print(f"Tempo de espera do paciente: {tempo_espera_eventos} eventos.\n")
 
     else:
-        print("Paciente ainda nao possui cadastro! Favor cadastrar o paciente abaixo antes de dar entrada na fila de espera.")
-        cadastrar_paciente(cpf)
-        
+        print("Não há pacientes na fila de espera. Favor dar entrada na fila de espera antes de chamar o próximo paciente.\n")
 
+def desistir_fila(cpf):
+    paciente_encontrado = None #Variavel de controle
+
+    for paciente in fila_espera:
+        if paciente["cpf"] == cpf:
+            paciente_encontrado = paciente
+            break
+
+    if paciente_encontrado:
+        fila_espera.remove(paciente_encontrado)
+        print(f"Paciente {paciente_encontrado['nome']} removido da fila de espera com sucesso.")
+    else:
+        print("Paciente não encontrado na fila de espera.")
+
+def tamanho_fila_espera():
+    print(f"Tamanho da fila de espera: {len(fila_espera)}")
+
+def relatorio_dia():
+    print("Relatório do dia:\n")
+    print(f"Total de pacientes cadastrados: {len(pacientes)}\n")
+    print(f"Total de pacientes na fila de espera: {len(fila_espera)}\n")
+    print(f"Total de pacientes atendidos: {len(pacientes_atendidos)}\n")
+
+    if pacientes_atendidos:
+        atendidos_ordenados = pacientes_atendidos.copy()
+        n = len(atendidos_ordenados)
+
+        for i in range(n):
+            for j in range(0, n-i-1):
+                if atendidos_ordenados[j]["tempo_espera"] < atendidos_ordenados[j+1]["tempo_espera"]:
+                    atendidos_ordenados[j], atendidos_ordenados[j+1] = atendidos_ordenados[j+1], atendidos_ordenados[j]
+        print("\nPacientes atendidos (Tempo de espera decrescente):\n")
+        for p in atendidos_ordenados:
+            print(f"Nome: {p['nome']} | CPF: {formatar_cpf(p['cpf'])} | Tempo de espera: {p['tempo_espera']} eventos")
 
 
 
@@ -110,6 +175,10 @@ while True:
               '1 - Cadastrar CPF\n'
               '2 - Buscar CPF\n'
               '3 - Dar entrada na fila de espera\n'
+              '4 - Chamar próximo paciente\n'
+              '5 - Desistir da fila de espera\n'
+              '6 - Tamanho da fila de espera\n'
+              '7 - Relatório do dia\n'
               '8 - Encerrar\n'))
     match n :
         case 1:
@@ -123,6 +192,15 @@ while True:
             cpf: str = input(f'Informe o numero do CPF: ')
             risco: str = input(f'Informe o nivel de risco: ')
             dar_entrada(cpf, risco)
+        case 4:
+            chamar_proximo()
+        case 5:
+            cpf: str = input(f'Informe o numero do CPF: ')
+            desistir_fila(cpf)
+        case 6:
+            tamanho_fila_espera()
+        case 7:
+            relatorio_dia()
         case 8:
             break
         case _ :
