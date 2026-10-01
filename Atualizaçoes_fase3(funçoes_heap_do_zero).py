@@ -7,7 +7,61 @@ pacientes_atendidos = []
 contador_eventos = 0
 desistentes = set()  # Conjunto para armazenar CPFs de pacientes que desistiram da fila
 
-import heapq  # Importa o módulo heapq para manipulação de heaps
+def _sift_up(heap, index):
+    """Sobe o elemento no índice `index` até sua posição correta (Min-Heap)."""
+    parent = (index - 1) // 2
+    # Enquanto não chegar na raiz e o nó atual for menor que o nó pai:
+    while index > 0 and heap[index] < heap[parent]:
+        heap[index], heap[parent] = heap[parent], heap[index]  # Troca os elementos
+        index = parent
+        parent = (index - 1) // 2
+
+
+def _sift_down(heap, index):
+    """Desce o elemento no índice `index` até sua posição correta (Min-Heap)."""
+    size = len(heap)
+
+    while True:
+        smallest = index
+        left = 2 * index + 1
+        right = 2 * index + 2
+
+        # Compara com o filho esquerdo
+        if left < size and heap[left] < heap[smallest]:
+            smallest = left
+
+        # Compara com o filho direito
+        if right < size and heap[right] < heap[smallest]:
+            smallest = right
+
+        # Se o menor não for o próprio pai, realiza a troca e continua descendo
+        if smallest != index:
+            heap[index], heap[smallest] = heap[smallest], heap[index]
+            index = smallest
+        else:
+            break
+
+
+def heappush_custom(heap, item):
+    """Equivalente a heapq.heappush em O(log n)."""
+    heap.append(item)  # Adiciona ao final da lista
+    _sift_up(heap, len(heap) - 1)  # Ajusta a subida
+
+
+def heappop_custom(heap):
+    """Equivalente a heapq.heappop em O(log n)."""
+    if not heap:
+        return None
+
+    # Troca o topo (menor elemento) com o último elemento
+    last_item = heap.pop()
+    if heap:
+        return_item = heap[0]
+        heap[0] = last_item
+        _sift_down(heap, 0)  # Ajusta a descida
+        return return_item
+
+    return last_item
 
 #Funcao para formatar a data
 def formatar_date(data):
@@ -112,7 +166,7 @@ def dar_entrada(cpf, risco):
     item_heap = (int(risco), contador_eventos, paciente_fila)
 
         # Insere mantendo a propriedade de heap em O(log n)
-    heapq.heappush(fila_espera, item_heap)
+    heappush_custom(fila_espera, item_heap)
 
     print(
         f"Paciente {paciente_fila['nome']} adicionado à fila no evento nº {contador_eventos} com risco {risco}."
@@ -126,7 +180,7 @@ def chamar_proximo():
     while fila_espera:
 
         # Remove o paciente de maior prioridade (menor risco/evento) em O(log n)
-        risco, evento_entrada, proximo_paciente = heapq.heappop(fila_espera)
+        risco, evento_entrada, proximo_paciente = heappop_custom(fila_espera)
         cpf_paciente = proximo_paciente["cpf"]
 
         chave_desistencia = (cpf_paciente, evento_entrada)  # Verifica se o paciente desistiu
