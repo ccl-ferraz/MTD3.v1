@@ -352,7 +352,6 @@ while True:
         case "1":
             cpf = validade_cpf()
             cadastrar_paciente(cpf)
-            print(f'{pacientes}')
         case "2":
             cpf = validade_cpf()
             buscar_paciente(cpf)
