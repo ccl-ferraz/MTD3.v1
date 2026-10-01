@@ -121,7 +121,6 @@ def cadastrar_paciente(cpf):
         cpf_f = formatar_cpf(cpf)
         data_f = formatar_date(data)
         print(f"CPF: {cpf_f} | Nome: {nome} | Data: {data_f}")
-        print (f"inddice : {indice}")
         contador_eventos += 1
 
 # 2 - Funcao Buscar Paciente
