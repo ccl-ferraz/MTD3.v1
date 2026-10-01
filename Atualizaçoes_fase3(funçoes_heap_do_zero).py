@@ -6,6 +6,7 @@ fila_espera = []
 pacientes_atendidos = []
 contador_eventos = 0
 desistentes = set()  # Conjunto para armazenar CPFs de pacientes que desistiram da fila
+total_desistencias = 0  # Contador global de desistências
 
 def _sift_up(heap, index):
     """Sobe o elemento no índice `index` até sua posição correta (Min-Heap)."""
@@ -206,6 +207,7 @@ def chamar_proximo():
 
 # 5 - Funcao para remover pacientes da lista de espera
 def desistir_fila(cpf):
+    global total_desistencias
     # Registra a desistência do paciente em O(1) sem alterar o Heap diretamente.
     # 1. Verifica se o paciente existe no cadastro do sistema
     indice = calcular_hash(cpf)
@@ -234,6 +236,7 @@ def desistir_fila(cpf):
         print(f"O paciente {paciente_cadastro['nome']} já registrou desistência anterior.")
     else:
         desistentes.add(chave_desistencia)
+        total_desistencias += 1
         print(f"O paciente {paciente_cadastro['nome']} desistiu da fila de espera.")
 
 
@@ -293,7 +296,7 @@ def relatorio_dia():
     print(f" Total de pacientes cadastrados: {total_cadastrados}")
     print(f" Pacientes aguardando na fila : {tamanho_real_fila}")
     print(f" Total de pacientes atendidos : {len(pacientes_atendidos)}")
-    print(f" Total de desistências         : {len(desistentes)}")
+    print(f" Total de desistências         : {total_desistencias}")
 
     if pacientes_atendidos:
         # Cálculo da média
