@@ -256,9 +256,7 @@ def tamanho_fila_espera():
     print(f"Tamanho da fila de espera: {len(fila_espera)}")
 
 # 7 - Funcao do relatorio do dia
-# ------------------------------------------------------------------
 # FUNÇÃO AUXILIAR DO MERGE SORT (Divisão e Conquista)
-# ------------------------------------------------------------------
 def merge_sort_pacientes(lista):
     # Ordena a lista de pacientes recursivamente por tempo_espera (decrescente).
     # Caso base: se a lista tem 0 ou 1 elemento, já está ordenada
@@ -275,7 +273,7 @@ def merge_sort_pacientes(lista):
 
 
 def _intercalar(esquerda, direita):
-    # Combina duas sublistas ordenadas mantendo a ordem DECRESCENTE."""
+    # Combina duas sublistas ordenadas mantendo a ordem DECRESCENTE.
     resultado = []
     i = j = 0
 
@@ -296,9 +294,8 @@ def _intercalar(esquerda, direita):
     return resultado
 
 
-# ------------------------------------------------------------------
+
 # RELATÓRIO DO DIA UTILIZANDO O MERGE SORT
-# ------------------------------------------------------------------
 def relatorio_dia():
     total_cadastrados = sum(len(bucket) for bucket in pacientes)
     tamanho_real_fila = len(fila_espera) - len(desistentes)
@@ -315,7 +312,6 @@ def relatorio_dia():
         media_tempo = total_tempo / len(pacientes_atendidos)
         print(f" Tempo médio de espera         : {media_tempo:.2f} eventos")
 
-        # >>> AQUI O MERGE SORT É APLICADO <<<
         # A lista desordenada é passada para o Merge Sort, que retorna uma lista nova e ordenada
         atendidos_ordenados = merge_sort_pacientes(pacientes_atendidos)
 
